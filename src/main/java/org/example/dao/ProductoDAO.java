@@ -17,6 +17,76 @@ public class ProductoDAO {
         this.connection = connection;
     }
 
+    public int modificar(Producto producto){
+
+        try (connection) {
+
+            final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE PRODUCTO SET "
+                    + " NOMBRE = ? "
+                    + ", DESCRIPCION = ? "
+                    + ", CANTIDAD = ? "
+                    + " WHERE ID = ? "
+            );
+
+            return ejecutarModificacion(producto, preparedStatement);
+
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int eliminar(Integer id) {
+
+        try (connection) {
+
+            final PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM PRODUCTO WHERE ID = ?");
+
+            try (preparedStatement) {
+
+                preparedStatement.setInt(1, id);
+
+                preparedStatement.execute();
+
+                int updateCount = preparedStatement.getUpdateCount();
+
+                return updateCount;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Producto> listar() {
+        List<Producto> resultado = new ArrayList<>();
+
+        try (connection) {
+
+            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD " +
+                    "FROM PRODUCTO");
+
+            try (preparedStatement) {
+
+                preparedStatement.execute();
+
+                final ResultSet resultSet = preparedStatement.getResultSet();
+
+                try (resultSet) {
+                    while (resultSet.next()) {
+                        Producto fila = new Producto(resultSet.getInt("ID"),
+                                resultSet.getString("NOMBRE"),
+                                resultSet.getString("DESCRIPCION"),
+                                resultSet.getInt("CANTIDAD")
+                        );
+                        resultado.add(fila);
+                    }
+                }
+            }
+            return resultado;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void guardar(Producto producto) {
         try (connection) {
 
@@ -43,7 +113,29 @@ public class ProductoDAO {
         }
     }
 
-    private void ejecutarRegistro(Producto producto, PreparedStatement preparedStatement) throws SQLException {
+    private int ejecutarModificacion(Producto producto, PreparedStatement preparedStatement){
+        int updateCount;
+        try (preparedStatement) {
+
+
+            preparedStatement.setString(1, producto.getNombre());
+            preparedStatement.setString(2, producto.getDescripcion());
+            preparedStatement.setInt(3, producto.getCantidad());
+            preparedStatement.setInt(4, producto.getId());
+
+            preparedStatement.execute();
+
+            updateCount = preparedStatement.getUpdateCount();
+
+            //System.out.println(id + " " + nombre + " " + descripcion);
+           return updateCount;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void ejecutarRegistro(Producto producto, PreparedStatement preparedStatement) throws
+            SQLException {
 
         preparedStatement.setString(1, producto.getNombre());
         preparedStatement.setString(2, producto.getDescripcion());
@@ -81,36 +173,6 @@ public class ProductoDAO {
         }
     }
 
-    public List<Producto> listar() {
-        List<Producto> resultado = new ArrayList<>();
 
-        try (connection) {
-
-            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD " +
-                    "FROM PRODUCTO");
-
-            try (preparedStatement) {
-
-                preparedStatement.execute();
-
-                final ResultSet resultSet = preparedStatement.getResultSet();
-
-                try(resultSet) {
-                    while (resultSet.next()) {
-                        Producto fila = new Producto(resultSet.getInt("ID"),
-                                resultSet.getString("NOMBRE"),
-                                resultSet.getString("DESCRIPCION"),
-                                resultSet.getInt("CANTIDAD")
-                        );
-                        resultado.add(fila);
-                    }
-                }
-            }
-            return resultado;
-        }catch (SQLException e){
-            throw new RuntimeException(e);
-        }
-    }
 }
-
 
