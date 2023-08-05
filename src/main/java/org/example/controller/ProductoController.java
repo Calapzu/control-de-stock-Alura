@@ -98,11 +98,12 @@ public class ProductoController {
     }
 
     public void guardar(Producto producto) throws SQLException {
+        /*
         String nombre = producto.getNombre();
         String descripcion = producto.getDescripcion();
         int cantidad = producto.getCantidad();
         Integer maximaCantidad = 50;
-
+        */
         ConectionFactory factory = new ConectionFactory();
         final Connection connection = factory.recuperaConexion();
 
@@ -115,7 +116,7 @@ public class ProductoController {
                     Statement.RETURN_GENERATED_KEYS);
 
             try (preparedStatement) {
-                do {
+                /*do {
                     int cantidadParaGuardar = Math.min(cantidad, maximaCantidad);
 
                     ejecutarRegistro(producto, preparedStatement);
@@ -123,7 +124,8 @@ public class ProductoController {
                     cantidad -= maximaCantidad;
 
                 } while (cantidad > 0);
-
+                */
+                ejecutarRegistro(producto, preparedStatement);
                 connection.commit();
                 System.out.println("COMMIT");
             } catch (Exception e) {
@@ -134,8 +136,9 @@ public class ProductoController {
         }
     }
 
+
     private void ejecutarRegistro(Producto producto, PreparedStatement preparedStatement) throws SQLException {
-        
+
         preparedStatement.setString(1, producto.getNombre());
         preparedStatement.setString(2, producto.getDescripcion());
         preparedStatement.setInt(3, producto.getCantidad());
@@ -163,10 +166,11 @@ public class ProductoController {
         final ResultSet resultSet = preparedStatement.getGeneratedKeys();
         try (resultSet) {
             while (resultSet.next()) {
+                producto.setId(resultSet.getInt(1));
                 System.out.println(
                         String.format(
-                                "Fue insertado en el producto de ID %d",
-                                resultSet.getInt(1)));
+                                "Fue insertado en el producto de ID %s",
+                               producto));
             }
         }
     }
