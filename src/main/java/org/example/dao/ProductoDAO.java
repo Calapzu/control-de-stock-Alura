@@ -1,8 +1,13 @@
 package org.example.dao;
 
+import org.example.factory.ConectionFactory;
 import org.example.modelo.Producto;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductoDAO {
 
@@ -12,11 +17,8 @@ public class ProductoDAO {
         this.connection = connection;
     }
 
-    public void guardar(Producto producto) throws SQLException {
-
+    public void guardar(Producto producto) {
         try (connection) {
-
-            connection.setAutoCommit(false);
 
             final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PRODUCTO (nombre, descripcion, cantidad)"
                             + " VALUES (?, ?, ?)",
@@ -35,10 +37,9 @@ public class ProductoDAO {
                 ejecutarRegistro(producto, preparedStatement);
                 connection.commit();
                 System.out.println("COMMIT");
-            } catch (Exception e) {
-                connection.rollback();
-                System.out.println("ROLLBACK");
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -80,6 +81,36 @@ public class ProductoDAO {
         }
     }
 
+    public List<Producto> listar() {
+        List<Producto> resultado = new ArrayList<>();
+
+        try (connection) {
+
+            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD " +
+                    "FROM PRODUCTO");
+
+            try (preparedStatement) {
+
+                preparedStatement.execute();
+
+                final ResultSet resultSet = preparedStatement.getResultSet();
+
+                try(resultSet) {
+                    while (resultSet.next()) {
+                        Producto fila = new Producto(resultSet.getInt("ID"),
+                                resultSet.getString("NOMBRE"),
+                                resultSet.getString("DESCRIPCION"),
+                                resultSet.getInt("CANTIDAD")
+                        );
+                        resultado.add(fila);
+                    }
+                }
+            }
+            return resultado;
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 

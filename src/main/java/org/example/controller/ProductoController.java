@@ -11,6 +11,13 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductoController {
+
+    private ProductoDAO productoDAO;
+
+    public ProductoController() {
+        this.productoDAO = new ProductoDAO(new ConectionFactory().recuperaConexion());
+    }
+
     public int modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
         ConectionFactory factory = new ConectionFactory();
         final Connection con = factory.recuperaConexion();
@@ -61,51 +68,23 @@ public class ProductoController {
         }
     }
 
-    public List<Map<String, String>> listar() throws SQLException {
+    public List<Producto> listar()  {
         /*Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://localhost/control_de_stock?useTimeZone=true&serverTimeZone=UTC",
                 "root",
                 "root"
         );*/
-        final Connection connection = new ConectionFactory().recuperaConexion();
+        return productoDAO.listar();
 
-        try (connection) {
-
-            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD " +
-                    "FROM PRODUCTO");
-
-            try (preparedStatement) {
-
-
-                boolean result = preparedStatement.execute();
-
-                ResultSet resultSet = preparedStatement.getResultSet();
-
-                List<Map<String, String>> resultado = new ArrayList<>();
-
-                while (resultSet.next()) {
-                    Map<String, String> fila = new HashMap<>();
-                    fila.put("ID", String.valueOf(resultSet.getInt("ID")));
-                    fila.put("NOMBRE", resultSet.getString("NOMBRE"));
-                    fila.put("DESCRIPCION", resultSet.getString("DESCRIPCION"));
-                    fila.put("CANTIDAD", String.valueOf(resultSet.getInt("CANTIDAD")));
-
-                    resultado.add(fila);
-                }
-
-                return resultado;
-            }
-        }
     }
 
-    public void guardar(Producto producto) throws SQLException {
+    public void guardar(Producto producto){
         /*
         String nombre = producto.getNombre();
         String descripcion = producto.getDescripcion();
         int cantidad = producto.getCantidad();
         Integer maximaCantidad = 50;
         */
-        ProductoDAO productoDAO = new ProductoDAO(new ConectionFactory().recuperaConexion());
         productoDAO.guardar(producto);
     }
 }
