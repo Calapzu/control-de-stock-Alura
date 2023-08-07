@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import org.example.modelo.Categoria;
+import org.example.modelo.Producto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,8 +62,8 @@ public class CategoriaDAO {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 try (resultSet) {
                     while (resultSet.next()) {
-                        int categoriaId = resultSet.getInt("ID");
-                        String categoriaNombre = resultSet.getString("NOMBRE");
+                        int categoriaId = resultSet.getInt("C.ID");
+                        String categoriaNombre = resultSet.getString("C.NOMBRE");
 
                         var categoria = resultado
                                 .stream()
@@ -73,6 +74,12 @@ public class CategoriaDAO {
                                     resultado.add(cat);
                                     return cat;
                                 });
+
+                        Producto producto = new Producto(resultSet.getInt("P.ID"),
+                                resultSet.getString("P.Nombre"),
+                                resultSet.getInt("P.CANTIDAD"));
+
+                        categoria.agregar(producto);
 
                     }
                 }
