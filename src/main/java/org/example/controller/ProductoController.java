@@ -37,13 +37,16 @@ public class ProductoController {
 
     }
 
-    public void guardar(Producto producto){
+    public void guardar(Producto producto, Integer categoriaId){
         /*
         String nombre = producto.getNombre();
         String descripcion = producto.getDescripcion();
         int cantidad = producto.getCantidad();
         Integer maximaCantidad = 50;
         */
+        producto.setCategoriaId(categoriaId);
         productoDAO.guardar(producto);
     }
+
+
 }

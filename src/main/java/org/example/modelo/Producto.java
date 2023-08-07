@@ -7,6 +7,8 @@ public class Producto {
     private String descripcion;
     private Integer cantidad;
 
+    private Integer categoriaId;
+
     public Producto(String nombre, String descripcion, Integer cantidad) {
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -56,6 +58,14 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
+    public Integer getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(Integer categoriaId) {
+        this.categoriaId = categoriaId;
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -66,4 +76,6 @@ public class Producto {
                 this.cantidad
         );
     }
+
+
 }

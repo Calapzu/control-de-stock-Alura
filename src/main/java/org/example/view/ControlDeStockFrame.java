@@ -237,7 +237,7 @@ public class ControlDeStockFrame extends JFrame {
             JOptionPane.showMessageDialog(this, String.format("El campo cantidad debe ser numérico dentro del rango %d y %d.", 0, Integer.MAX_VALUE));
             return;
         }
-        // TODO
+
         //var producto = new Object[] { textoNombre.getText(), textoDescripcion.getText(), cantidadInt };
         /*
         var producto = new HashMap<String, String>();
@@ -245,10 +245,12 @@ public class ControlDeStockFrame extends JFrame {
         producto.put("DESCRIPCION", textoDescripcion.getText());
         producto.put("CANTIDAD", String.valueOf(cantidadInt));
         */
-        var producto = new Producto(textoNombre.getText(), textoDescripcion.getText(), cantidadInt);
-        var categoria = comboCategoria.getSelectedItem();
 
-        this.productoController.guardar(producto);
+        var producto = new Producto(textoNombre.getText(), textoDescripcion.getText(), cantidadInt);
+
+        var categoria = (Categoria) comboCategoria.getSelectedItem();
+
+        this.productoController.guardar(producto, categoria.getId());
 
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 

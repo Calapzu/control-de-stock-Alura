@@ -86,8 +86,8 @@ public class ProductoDAO {
     public void guardar(Producto producto) {
         try {
 
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PRODUCTO (nombre, descripcion, cantidad)"
-                            + " VALUES (?, ?, ?)",
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PRODUCTO (nombre, descripcion, cantidad, categoria_id)"
+                            + " VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
             try (preparedStatement) {
@@ -137,6 +137,7 @@ public class ProductoDAO {
             preparedStatement.setString(1, producto.getNombre());
             preparedStatement.setString(2, producto.getDescripcion());
             preparedStatement.setInt(3, producto.getCantidad());
+            preparedStatement.setInt(4, producto.getCategoriaId());
 
             preparedStatement.execute();
 

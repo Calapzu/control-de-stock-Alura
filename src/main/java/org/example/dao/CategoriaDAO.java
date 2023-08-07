@@ -25,18 +25,18 @@ public class CategoriaDAO {
                     "SELECT ID, NOMBRE FROM CATEGORIA"
             );
 
-            try (preparedStatement){
+            try (preparedStatement) {
 
 
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            try (resultSet) {
-                while(resultSet.next()){
-                    var categoria = new Categoria(resultSet.getInt("ID"),
-                    resultSet.getString("NOMBRE"));
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                try (resultSet) {
+                    while (resultSet.next()) {
+                        var categoria = new Categoria(resultSet.getInt("ID"),
+                                resultSet.getString("NOMBRE"));
 
-                    resultado.add(categoria);
+                        resultado.add(categoria);
+                    }
                 }
-            };
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
