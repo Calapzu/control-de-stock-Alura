@@ -193,22 +193,23 @@ public class ControlDeStockFrame extends JFrame {
         }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
+
     private void eliminar() {
         if (tieneFilaElegida()) {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
         }
-        Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn())).ifPresentOrElse(fila -> {
-            Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
-            int cantidadEliminada;
 
-            cantidadEliminada = this.productoController.eliminar(id);
+        Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
+                .ifPresentOrElse(fila -> {
+                    Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
+                    System.out.println("Suma id "+(id+1));
+                    var filasModificadas = this.productoController.eliminar(id);
 
-
-            modelo.removeRow(tabla.getSelectedRow());
-
-            JOptionPane.showMessageDialog(this, cantidadEliminada + " Item eliminado con éxito!");
-        }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+                    modelo.removeRow(tabla.getSelectedRow());
+                    JOptionPane.showMessageDialog(this,
+                            String.format("%d item eliminado con éxito!", filasModificadas));
+                }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
     private void cargarTabla() {
@@ -219,8 +220,7 @@ public class ControlDeStockFrame extends JFrame {
         } catch (Exception e) {
             throw e;
         }
-
-
+        
     }
 
     private void guardar() {

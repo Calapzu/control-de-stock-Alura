@@ -15,7 +15,8 @@ public class ProductoController {
     private ProductoDAO productoDAO;
 
     public ProductoController() {
-        this.productoDAO = new ProductoDAO(new ConectionFactory().recuperaConexion());
+        var factory = new ConectionFactory();
+        this.productoDAO = new ProductoDAO(factory.recuperaConexion());
     }
 
     public int modificar(Producto producto){

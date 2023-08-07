@@ -20,6 +20,10 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
+    public Producto(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

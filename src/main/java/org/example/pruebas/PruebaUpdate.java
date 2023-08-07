@@ -26,10 +26,10 @@ public class PruebaUpdate {
                 + " WHERE ID = " + id);
 
          */
-        String nombre = "Yamson";
+        String nombre = "Cafe";
         String descripcion = "Calapzu";
         int cantidad = 20;
-        int id = 5;
+        int id = 25;
 
         ProductoController productoController = new ProductoController();
         int filasModificadas;

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ProductoDAO {
 
-    final private Connection connection;
+    private Connection connection;
 
     public ProductoDAO(Connection connection) {
         this.connection = connection;
@@ -19,7 +19,7 @@ public class ProductoDAO {
 
     public int modificar(Producto producto){
 
-        try (connection) {
+        try{
 
             final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE PRODUCTO SET "
                     + " NOMBRE = ? "
@@ -36,18 +36,14 @@ public class ProductoDAO {
     }
 
     public int eliminar(Integer id) {
+        try {
+            final PreparedStatement statement = connection.prepareStatement("DELETE FROM PRODUCTO WHERE ID = ?");
 
-        try (connection) {
+            try (statement) {
+                statement.setInt(1, id);
+                statement.execute();
 
-            final PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM PRODUCTO WHERE ID = ?");
-
-            try (preparedStatement) {
-
-                preparedStatement.setInt(1, id);
-
-                preparedStatement.execute();
-
-                int updateCount = preparedStatement.getUpdateCount();
+                int updateCount = statement.getUpdateCount();
 
                 return updateCount;
             }
@@ -59,7 +55,7 @@ public class ProductoDAO {
     public List<Producto> listar() {
         List<Producto> resultado = new ArrayList<>();
 
-        try (connection) {
+        try {
 
             final PreparedStatement preparedStatement = connection.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD " +
                     "FROM PRODUCTO");
@@ -88,9 +84,9 @@ public class ProductoDAO {
     }
 
     public void guardar(Producto producto) {
-        try (connection) {
+        try {
 
-            final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PRODUCTO (nombre, descripcion, cantidad)"
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PRODUCTO (nombre, descripcion, cantidad)"
                             + " VALUES (?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
@@ -104,8 +100,9 @@ public class ProductoDAO {
 
                 } while (cantidad > 0);
                 */
+
                 ejecutarRegistro(producto, preparedStatement);
-                connection.commit();
+                //connection.commit();
                 System.out.println("COMMIT");
             }
         } catch (SQLException e) {
@@ -114,7 +111,7 @@ public class ProductoDAO {
     }
 
     private int ejecutarModificacion(Producto producto, PreparedStatement preparedStatement){
-        int updateCount;
+
         try (preparedStatement) {
 
 
@@ -125,6 +122,7 @@ public class ProductoDAO {
 
             preparedStatement.execute();
 
+            int updateCount;
             updateCount = preparedStatement.getUpdateCount();
 
             //System.out.println(id + " " + nombre + " " + descripcion);
@@ -134,42 +132,44 @@ public class ProductoDAO {
         }
     }
 
-    private void ejecutarRegistro(Producto producto, PreparedStatement preparedStatement) throws
-            SQLException {
+    private void ejecutarRegistro(Producto producto, PreparedStatement preparedStatement) {
+        try {
+            preparedStatement.setString(1, producto.getNombre());
+            preparedStatement.setString(2, producto.getDescripcion());
+            preparedStatement.setInt(3, producto.getCantidad());
 
-        preparedStatement.setString(1, producto.getNombre());
-        preparedStatement.setString(2, producto.getDescripcion());
-        preparedStatement.setInt(3, producto.getCantidad());
+            preparedStatement.execute();
 
-        preparedStatement.execute();
+            /**
+             * Try With Resources
+             * Con la version 7 de JAVA
 
-        /**
-         * Try With Resources
-         * Con la version 7 de JAVA
+             try(ResultSet resultSet = preparedStatement.getGeneratedKeys()){
+             while (resultSet.next()) {
+             System.out.println(
+             String.format(
+             "Fue insertado en el producto de ID %d",
+             resultSet.getInt(1)));
+             }
+             }
+             * */
 
-         try(ResultSet resultSet = preparedStatement.getGeneratedKeys()){
-         while (resultSet.next()) {
-         System.out.println(
-         String.format(
-         "Fue insertado en el producto de ID %d",
-         resultSet.getInt(1)));
-         }
-         }
-         * */
-
-        /**
-         * Try With Resources
-         * Con la version 9 de JAVA
-         */
-        final ResultSet resultSet = preparedStatement.getGeneratedKeys();
-        try (resultSet) {
-            while (resultSet.next()) {
-                producto.setId(resultSet.getInt(1));
-                System.out.println(
-                        String.format(
-                                "Fue insertado en el producto de ID %s",
-                                producto));
+            /**
+             * Try With Resources
+             * Con la version 9 de JAVA
+             */
+            final ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            try (resultSet) {
+                while (resultSet.next()) {
+                    producto.setId(resultSet.getInt(1));
+                    System.out.println(
+                            String.format(
+                                    "Fue insertado en el producto de ID %s",
+                                    producto));
+                }
             }
+        }catch (SQLException e){
+            System.out.println("Error" + e);
         }
     }
 
