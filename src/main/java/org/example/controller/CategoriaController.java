@@ -17,12 +17,10 @@ public class CategoriaController {
     }
 
     public List<Categoria> listar(){
-        //TODO
         return categoriaDAO.listar();
     }
 
-    public List<?> cargaReporte(){
-        //TODO
-        return new ArrayList<>();
+    public List<Categoria> cargaReporte(){
+        return this.listar();
     }
 }

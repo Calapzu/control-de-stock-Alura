@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.factory.ConectionFactory;
+import org.example.modelo.Categoria;
 import org.example.modelo.Producto;
 import org.example.dao.ProductoDAO;
 
@@ -35,6 +36,10 @@ public class ProductoController {
         );*/
         return productoDAO.listar();
 
+    }
+
+    public List<Producto> listar(Categoria categoria){
+        return productoDAO.listar(categoria.getId());
     }
 
     public void guardar(Producto producto, Integer categoriaId){

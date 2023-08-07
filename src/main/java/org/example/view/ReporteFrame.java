@@ -1,6 +1,7 @@
 package org.example.view;
 
 import org.example.controller.CategoriaController;
+import org.example.controller.ProductoController;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,10 +16,12 @@ public class ReporteFrame extends JFrame {
     private DefaultTableModel modelo;
 
     private CategoriaController categoriaController;
+    private ProductoController productoController;
 
-    public ReporteFrame(ControlDeStockFrame controlDeStockFrame){
+    public ReporteFrame(ControlDeStockFrame controlDeStockFrame) {
 
         this.categoriaController = new CategoriaController();
+        this.productoController = new ProductoController();
 
         Container container = getContentPane();
         setLayout(null);
@@ -40,10 +43,22 @@ public class ReporteFrame extends JFrame {
         setLocationRelativeTo(controlDeStockFrame);
     }
 
-    private void cargaReporte(){
+    private void cargaReporte() {
         var contenido = categoriaController.cargaReporte();
-        contenido.forEach(fila -> modelo
-                .addRow(new Object[] {}));
+        contenido.forEach(categoria -> {
+            modelo
+                    .addRow(new Object[]{categoria});
+
+            var productos = this.productoController.listar(categoria);
+
+            productos.forEach(producto -> modelo.addRow(
+                    new Object[]{
+                            "",
+                            producto.getNombre(),
+                            producto.getCantidad()
+                    }
+            ));
+        });
     }
 
 }
